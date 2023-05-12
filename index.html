@@ -89,7 +89,7 @@
   const renderComments = () => {
     const commentsHtml = comentarios.map((comment, index) => {
       if (comment.isLiked) {
-        return `<li class="comment">
+        return `<li class="comment" data-index='${index}'>
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -107,7 +107,7 @@
         </div>
       </li>`;
       } else {
-        return `<li class="comment">
+        return `<li class="comment" data-index='${index}'>
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
