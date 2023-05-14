@@ -149,7 +149,7 @@
       name: nameInputElement.value
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;"),
-      date: currentDate.toLocaleDateString() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes(),
+      date: currentDate.toLocaleDateString() + ' ' + currentDate.toLocaleTimeString().slice(0, -3),
       text: commentInputElement.value
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;"),
