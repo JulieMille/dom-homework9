@@ -21,7 +21,7 @@ fetchGet = () => {
                         name: comment.author.name,
                         date: new Date(comment.date).toLocaleDateString() + ' ' + new Date(comment.date).toLocaleTimeString().slice(0, -3),
                         text: comment.text,
-                        likes: comment.likes,
+                        likesNumber: comment.likes,
                         isLiked: false,
                         id: comment.id,
                     };
