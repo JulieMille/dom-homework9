@@ -7,14 +7,14 @@ let comentarios = [];
 
 
 fetchGet = () => {
-    const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/JulieSemenova/comments',
+    fetch('https://webdev-hw-api.vercel.app/api/v1/JulieSemenova/comments',
         {
             method: "GET"
-        });
-
-    fetchPromise.then((response) => {
-
-        response.json().then((responseData) => {
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((responseData) => {
             const appComments = responseData.comments
                 .map((comment) => {
                     return {
@@ -26,10 +26,12 @@ fetchGet = () => {
                         id: comment.id,
                     };
                 });
-            comentarios = appComments;
+            return appComments;
+        })
+        .then((data) => {
+            comentarios = data;
             renderComments();
         });
-    });
 };
 
 fetchGet();
@@ -126,19 +128,8 @@ buttonElement.addEventListener("click", () => {
         return;
     }
 
-    // const currentDate = new Date();
-
-    // comentarios.push({
-    //     name: nameInputElement.value
-    //         .replaceAll("<", "&lt;")
-    //         .replaceAll(">", "&gt;"),
-    //     date: currentDate.toLocaleDateString() + ' ' + currentDate.toLocaleTimeString().slice(0, -3),
-    //     text: commentInputElement.value
-    //         .replaceAll("<", "&lt;")
-    //         .replaceAll(">", "&gt;"),
-    //     likesNumber: 0,
-    // });
-
+    buttonElement.disabled = true;
+    buttonElement.textContent = "Комментарий добавляется";
 
     const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/JulieSemenova/comments',
         {
@@ -147,15 +138,17 @@ buttonElement.addEventListener("click", () => {
                 name: nameInputElement.value,
                 text: commentInputElement.value,
             })
-        }).then((response) => {
-            response.json().then((responseData) => {
+        })
+        .then((response) => {
+            response.json()
+                .then((responseData) => {
+                    buttonElement.disabled = false;
+                    buttonElement.textContent = "Написать";
 
-                console.log(responseData);
+                    fetchGet();
+                    renderComments();
 
-                fetchGet();
-                renderComments();
-
-            });
+                });
         });
 
     renderComments();
