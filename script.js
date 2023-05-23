@@ -4,7 +4,7 @@ const nameInputElement = document.querySelector(".add-form-name");
 const commentInputElement = document.querySelector(".add-form-text");
 
 let comentarios = [];
-
+let isInitialLoading = true;
 
 fetchGet = () => {
     fetch('https://webdev-hw-api.vercel.app/api/v1/JulieSemenova/comments',
@@ -30,6 +30,7 @@ fetchGet = () => {
         })
         .then((data) => {
             comentarios = data;
+            isInitialLoading = false;
             renderComments();
         });
 };
@@ -70,6 +71,10 @@ const initCommsListeners = () => {
 };
 
 const renderComments = () => {
+    if (isInitialLoading) {
+        listElement.innerHTML = "Загружаю комментарии...";
+        return;
+    }
     const commentsHtml = comentarios.map((comment, index) => {
         if (comment.isLiked) {
             return `<li class="comment" data-index='${index}'>
