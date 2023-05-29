@@ -161,6 +161,8 @@ buttonElement.addEventListener("click", () => {
         .then((responseData) => {
             buttonElement.disabled = false;
             buttonElement.textContent = "Написать";
+            nameInputElement.value = "";
+            commentInputElement.value = "";
 
             fetchGet();
             renderComments();
@@ -173,8 +175,9 @@ buttonElement.addEventListener("click", () => {
             }
 
             console.warn(error);
+            buttonElement.disabled = false;
+            buttonElement.textContent = "Написать";
         });
     renderComments();
-    nameInputElement.value = "";
-    commentInputElement.value = "";
+
 });
