@@ -142,21 +142,42 @@ buttonElement.addEventListener("click", () => {
             body: JSON.stringify({
                 name: nameInputElement.value,
                 text: commentInputElement.value,
+                forceError: true,
             })
         })
         .then((response) => {
-            response.json()
-                .then((responseData) => {
-                    buttonElement.disabled = false;
-                    buttonElement.textContent = "Написать";
+            if (response.status === 500) {
+                alert('Сервер сломался, попробуй позже');
+                throw new Error("Ошибка сервера");
 
-                    fetchGet();
-                    renderComments();
+            } else if (response.status === 400) {
+                alert('Имя и комментарий должны быть не короче 3 символов');
+                throw new Error("Неверный запрос");
 
-                });
+            } else {
+                return response.json();
+            }
+        })
+        .then((responseData) => {
+            buttonElement.disabled = false;
+            buttonElement.textContent = "Написать";
+            nameInputElement.value = "";
+            commentInputElement.value = "";
+
+            fetchGet();
+            renderComments();
+
+        })
+        .catch((error) => {
+
+            if (!navigator.onLine) {
+                alert('Кажется, у вас сломался интернет, попробуйте позже');
+            }
+
+            console.warn(error);
+            buttonElement.disabled = false;
+            buttonElement.textContent = "Написать";
         });
-
     renderComments();
-    nameInputElement.value = "";
-    commentInputElement.value = "";
+
 });
