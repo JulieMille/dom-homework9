@@ -10,7 +10,7 @@ fetchGet();
 
 
 buttonElement.addEventListener("click", async () => {
-    const { isInitialLoading, ...comentarios } = fetchGet();
+    // const { isInitialLoading, ...comentarios } = fetchGet();
     renderComments(isInitialLoading, comentarios);
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");

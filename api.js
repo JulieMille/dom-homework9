@@ -16,7 +16,6 @@ const fetchGet = () => {
             return response.json();
         })
         .then((responseData) => {
-            console.log(responseData.comments);
             const appComments = responseData.comments
                 .map((comment) => {
                     return {
@@ -34,51 +33,52 @@ const fetchGet = () => {
             comentarios = data;
             isInitialLoading = false;
             renderComments(isInitialLoading, comentarios);
-            return isInitialLoading, comentarios;
+            // return isInitialLoading, comentarios;
         });
 };
 
-const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/JulieSemenova/comments',
-    {
-        method: "POST",
-        body: JSON.stringify({
-            name: nameInputElement.value,
-            text: commentInputElement.value,
-            forceError: true,
+const fetchPromise = () =>
+    fetch('https://webdev-hw-api.vercel.app/api/v1/JulieSemenova/comments',
+        {
+            method: "POST",
+            body: JSON.stringify({
+                name: nameInputElement.value,
+                text: commentInputElement.value,
+                forceError: true,
+            })
         })
-    })
-    .then((response) => {
-        if (response.status === 500) {
-            alert('Сервер сломался, попробуй позже');
-            throw new Error("Ошибка сервера");
+        .then((response) => {
+            if (response.status === 500) {
+                alert('Сервер сломался, попробуй позже');
+                throw new Error("Ошибка сервера");
 
-        } else if (response.status === 400) {
-            alert('Имя и комментарий должны быть не короче 3 символов');
-            throw new Error("Неверный запрос");
+            } else if (response.status === 400) {
+                alert('Имя и комментарий должны быть не короче 3 символов');
+                throw new Error("Неверный запрос");
 
-        } else {
-            return response.json();
-        }
-    })
-    .then(() => {
-        buttonElement.disabled = false;
-        buttonElement.textContent = "Написать";
-        nameInputElement.value = "";
-        commentInputElement.value = "";
+            } else {
+                return response.json();
+            }
+        })
+        .then(() => {
+            buttonElement.disabled = false;
+            buttonElement.textContent = "Написать";
+            nameInputElement.value = "";
+            commentInputElement.value = "";
 
-        fetchGet();
+            fetchGet();
 
-    })
-    .catch((error) => {
+        })
+        .catch((error) => {
 
-        if (!navigator.onLine) {
-            alert('Кажется, у вас сломался интернет, попробуйте позже');
-        }
+            if (!navigator.onLine) {
+                alert('Кажется, у вас сломался интернет, попробуйте позже');
+            }
 
-        console.warn(error);
-        buttonElement.disabled = false;
-        buttonElement.textContent = "Написать";
-    });
+            console.warn(error);
+            buttonElement.disabled = false;
+            buttonElement.textContent = "Написать";
+        });
 
 export { fetchGet, fetchPromise };
 export { isInitialLoading, comentarios };
