@@ -9,96 +9,96 @@ const host = "https://wedev-api.sky.pro/api/v2/JulieSemenova/comments";
 let isInitialLoading = true;
 
 const fetchGet = () => {
-    fetch(host,
-        {
-            method: "GET",
-            headers: {
-                Authorization: token,
-            }
-        })
-        .then((response) => {
-            return response.json();
-        })
-        .then((responseData) => {
-            const appComments = responseData.comments
-                .map((comment) => {
-                    return {
-                        name: comment.author.name,
-                        date: new Date(comment.date).toLocaleDateString() + ' ' + new Date(comment.date).toLocaleTimeString().slice(0, -3),
-                        text: comment.text,
-                        likesNumber: comment.likes,
-                        isLiked: false,
-                        id: comment.id,
-                    };
-                });
-            return appComments;
-        })
-        .then((data) => {
-            comentarios = data;
-            isInitialLoading = false;
-            renderComments(isInitialLoading, comentarios);
+  fetch(host,
+    {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      }
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
+      const appComments = responseData.comments
+        .map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleDateString() + ' ' + new Date(comment.date).toLocaleTimeString().slice(0, -3),
+            text: comment.text,
+            likesNumber: comment.likes,
+            isLiked: false,
+            id: comment.id,
+          };
         });
+      return appComments;
+    })
+    .then((data) => {
+      comentarios = data;
+      isInitialLoading = false;
+      renderComments(isInitialLoading, comentarios);
+    });
 };
 
 fetchGet();
 
 const fetchPost = () => {
-    const nameInputElement = document.querySelector(".add-form-name");
-    const commentInputElement = document.querySelector(".add-form-text");
-    const buttonElement = document.querySelector(".add-form-button");
+  const nameInputElement = document.querySelector(".add-form-name");
+  const commentInputElement = document.querySelector(".add-form-text");
+  const buttonElement = document.querySelector(".add-form-button");
 
-    fetch(host,
-        {
-            method: "POST",
-            body: JSON.stringify({
-                name: nameInputElement.value,
-                text: commentInputElement.value,
-                // forceError: true,
-            }),
-            headers: {
-                Authorization: token,
-            }
-        })
-        .then((response) => {
-            if (response.status === 500) {
-                alert('Сервер сломался, попробуй позже');
-                throw new Error("Ошибка сервера");
+  fetch(host,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        "name": nameInputElement.value,
+        "text": commentInputElement.value,
+        // forceError: true,
+      }),
+      headers: {
+        Authorization: token,
+      }
+    })
+    .then((response) => {
+      if (response.status === 500) {
+        alert('Сервер сломался, попробуй позже');
+        throw new Error("Ошибка сервера");
 
-                // } else if (response.status === 400) {
-                //     alert('Имя и комментарий должны быть не короче 3 символов');
-                //     throw new Error("Неверный запрос");
+      } else if (response.status === 400) {
+          alert('Имя и комментарий должны быть не короче 3 символов');
+          throw new Error("Неверный запрос");
 
-            }
-            else {
-                return response.json();
-            }
-        })
-        .then(() => {
-            buttonElement.disabled = false;
-            buttonElement.textContent = "Написать";
-            nameInputElement.value = "";
-            commentInputElement.value = "";
+      }
+      else {
+        return response.json();
+      }
+    })
+    .then(() => {
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Написать";
+      nameInputElement.value = "";
+      commentInputElement.value = "";
 
-            fetchGet();
+      fetchGet();
 
-        })
-        .catch((error) => {
+    })
+    .catch((error) => {
 
-            if (!navigator.onLine) {
-                alert('Кажется, у вас сломался интернет, попробуйте позже');
-            }
+      if (!navigator.onLine) {
+        alert('Кажется, у вас сломался интернет, попробуйте позже');
+      }
 
-            console.warn(error);
-            buttonElement.disabled = false;
-            buttonElement.textContent = "Написать";
-        });
+      console.warn(error);
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Написать";
+    });
 };
 
 const renderComments = (isInitialLoading, comentarios) => {
-    const appEl = document.getElementById('app');
-    const commentsHtml = comentarios.map((comment, index) => {
-        if (comment.isLiked) {
-            return `<li class="comment" data-index='${index}'>
+  const appEl = document.getElementById('app');
+  const commentsHtml = comentarios.map((comment, index) => {
+    if (comment.isLiked) {
+      return `<li class="comment" data-index='${index}'>
                 <div class="comment-header">
                   <div>${comment.name}</div>
                   <div>${comment.date}</div>
@@ -115,8 +115,8 @@ const renderComments = (isInitialLoading, comentarios) => {
                   </div>
                 </div>
               </li>`;
-        } else {
-            return `<li class="comment" data-index='${index}'>
+    } else {
+      return `<li class="comment" data-index='${index}'>
                 <div class="comment-header">
                   <div>${comment.name}</div>
                   <div>${comment.date}</div>
@@ -133,10 +133,10 @@ const renderComments = (isInitialLoading, comentarios) => {
                   </div>
                 </div>
               </li>`;
-        }
-    }).join('');
+    }
+  }).join('');
 
-    const appHtml = `<div class="container">
+  const appHtml = `<div class="container">
 <ul class="comments">
   <!-- рендеринг -->
   ${commentsHtml}
@@ -178,75 +178,74 @@ const renderComments = (isInitialLoading, comentarios) => {
 
 
 
-    if (isInitialLoading) {
-        listElement.innerHTML = "Загружаю комментарии...";
-        return;
+  if (isInitialLoading) {
+    listElement.innerHTML = "Загружаю комментарии...";
+    return;
+  }
+
+  appEl.innerHTML = appHtml;
+
+  const buttonElement = document.querySelector(".add-form-button");
+  const nameInputElement = document.querySelector(".add-form-name");
+  const commentInputElement = document.querySelector(".add-form-text");
+  const listElement = document.querySelector(".comments");
+
+  buttonElement.addEventListener("click", () => {
+    nameInputElement.classList.remove("error");
+    commentInputElement.classList.remove("error");
+    if (nameInputElement.value === "") {
+      nameInputElement.classList.add("error");
+      return;
+    }
+    if (commentInputElement.value === "") {
+      commentInputElement.classList.add("error");
+      return;
     }
 
-    appEl.innerHTML = appHtml;
+    buttonElement.disabled = true;
+    buttonElement.textContent = "Комментарий добавляется";
 
-    const buttonElement = document.querySelector(".add-form-button");
-    const nameInputElement = document.querySelector(".add-form-name");
-    const commentInputElement = document.querySelector(".add-form-text");
-    const listElement = document.querySelector(".comments");
+    fetchPost();
 
-    buttonElement.addEventListener("click", () => {
-        renderComments(isInitialLoading, comentarios);
-        nameInputElement.classList.remove("error");
-        commentInputElement.classList.remove("error");
-        if (nameInputElement.value === "") {
-            nameInputElement.classList.add("error");
-            return;
-        }
-        if (commentInputElement.value === "") {
-            commentInputElement.classList.add("error");
-            return;
-        }
+    renderComments(isInitialLoading, comentarios);
 
-        buttonElement.disabled = true;
-        buttonElement.textContent = "Комментарий добавляется";
+  });
 
-        fetchPost();
-
-        renderComments(isInitialLoading, comentarios);
-
-    });
-
-    initLikeButtonsElements();
-    initCommsListeners();
+  initLikeButtonsElements();
+  initCommsListeners();
 }
 
 
 
 const initLikeButtonsElements = () => {
-    const likeButtons = document.querySelectorAll('.like-button');
+  const likeButtons = document.querySelectorAll('.like-button');
 
-    likeButtons.forEach((button) => {
-        button.addEventListener('click', (event) => {
-            event.stopPropagation();
-            const index = button.dataset.index;
-            const comment = comentarios[index];
+  likeButtons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const index = button.dataset.index;
+      const comment = comentarios[index];
 
-            comment.likesNumber = comment.isLiked ? comment.likesNumber - 1 : comment.likesNumber + 1;
-            comment.isLiked = !comment.isLiked;
+      comment.likesNumber = comment.isLiked ? comment.likesNumber - 1 : comment.likesNumber + 1;
+      comment.isLiked = !comment.isLiked;
 
-            renderComments();
-        });
+      renderComments();
     });
+  });
 };
 
 const initCommsListeners = () => {
-    const comms = document.querySelectorAll('.comment');
+  const comms = document.querySelectorAll('.comment');
 
-    comms.forEach((comm) => {
-        comm.addEventListener('click', (event) => {
-            event.stopPropagation();
-            const index = comm.dataset.index;
-            const comment = comentarios[index];
+  comms.forEach((comm) => {
+    comm.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const index = comm.dataset.index;
+      const comment = comentarios[index];
 
-            commentInputElement.value = `${comment.name}: ${comment.text}`;
+      commentInputElement.value = `${comment.name}: ${comment.text}`;
 
-            renderComments();
-        });
+      renderComments();
     });
+  });
 };
