@@ -36,7 +36,7 @@ const fetchGet = () => {
     .then((data) => {
       comentarios = data;
       isInitialLoading = false;
-      renderComments(isInitialLoading, comentarios);
+      renderApp(isInitialLoading, comentarios);
     });
 };
 
@@ -65,8 +65,8 @@ const fetchPost = () => {
         throw new Error("Ошибка сервера");
 
       } else if (response.status === 400) {
-          alert('Имя и комментарий должны быть не короче 3 символов');
-          throw new Error("Неверный запрос");
+        alert('Имя и комментарий должны быть не короче 3 символов');
+        throw new Error("Неверный запрос");
 
       }
       else {
@@ -94,8 +94,31 @@ const fetchPost = () => {
     });
 };
 
-const renderComments = (isInitialLoading, comentarios) => {
+token = null;
+
+const renderApp = (isInitialLoading, comentarios) => {
   const appEl = document.getElementById('app');
+  if (!token) {
+    const appHtml = `<div class="login-form">
+  <p>Форма входа</p>
+  <input type="text" class="login-name" placeholder="Введите ваш логин" />
+  <br>
+  <br>
+  <input type="password" class="login-password" placeholder="Введите ваш пароль" />
+  <div class="add-form-row">
+    <button class="login-button">Войти</button>
+  </div>
+  <a class="link" href="#">Зарегистрироваться</a>
+  </div>`
+    appEl.innerHTML = appHtml;
+
+    document.querySelector(".login-button").addEventListener('click', () => {
+      let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+      fetchGet();
+      renderApp();
+    })
+    return;
+  }
   const commentsHtml = comentarios.map((comment, index) => {
     if (comment.isLiked) {
       return `<li class="comment" data-index='${index}'>
@@ -207,7 +230,7 @@ const renderComments = (isInitialLoading, comentarios) => {
 
     fetchPost();
 
-    renderComments(isInitialLoading, comentarios);
+    renderApp(isInitialLoading, comentarios);
 
   });
 
@@ -229,7 +252,7 @@ const initLikeButtonsElements = () => {
       comment.likesNumber = comment.isLiked ? comment.likesNumber - 1 : comment.likesNumber + 1;
       comment.isLiked = !comment.isLiked;
 
-      renderComments();
+      renderApp();
     });
   });
 };
@@ -245,7 +268,7 @@ const initCommsListeners = () => {
 
       commentInputElement.value = `${comment.name}: ${comment.text}`;
 
-      renderComments();
+      renderApp();
     });
   });
 };
