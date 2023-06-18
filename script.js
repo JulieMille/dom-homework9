@@ -1,24 +1,43 @@
+import { fetchGet, fetchPost } from "./api.js";
+import { renderLoginComponent } from "./login-component.js";
+
+const buttonElement = document.querySelector(".add-form-button");
+const nameInputElement = document.querySelector(".add-form-name");
+const commentInputElement = document.querySelector(".add-form-text");
+const listElement = document.querySelector(".comments");
+
 let comentarios = [];
-
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-
-const host = "https://wedev-api.sky.pro/api/v2/JulieSemenova/comments";
-
-// let login = prompt('Логин');
 
 let isInitialLoading = true;
 
-const fetchGet = () => {
-  fetch(host,
-    {
-      method: "GET",
-      headers: {
-        Authorization: token,
-      }
-    })
-    .then((response) => {
-      return response.json();
-    })
+fetchGet();
+
+fetchPost({ token })
+  .then(() => {
+    buttonElement.disabled = false;
+    buttonElement.textContent = "Написать";
+    nameInputElement.value = "";
+    commentInputElement.value = "";
+
+    fetchGet();
+
+  })
+  .catch((error) => {
+
+    if (!navigator.onLine) {
+      alert('Кажется, у вас сломался интернет, попробуйте позже');
+    }
+
+    console.warn(error);
+    buttonElement.disabled = false;
+    buttonElement.textContent = "Написать";
+  });
+
+// token = null;
+
+const fetchCommsAndRender = () => {
+  return fetchGet({ token })
     .then((responseData) => {
       const appComments = responseData.comments
         .map((comment) => {
@@ -40,123 +59,38 @@ const fetchGet = () => {
     });
 };
 
-fetchGet();
-
-const fetchPost = () => {
-  const nameInputElement = document.querySelector(".add-form-name");
-  const commentInputElement = document.querySelector(".add-form-text");
-  const buttonElement = document.querySelector(".add-form-button");
-
-  fetch(host,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        "name": nameInputElement.value,
-        "text": commentInputElement.value,
-        // forceError: true,
-      }),
-      headers: {
-        Authorization: token,
-      }
-    })
-    .then((response) => {
-      if (response.status === 500) {
-        alert('Сервер сломался, попробуй позже');
-        throw new Error("Ошибка сервера");
-
-      } else if (response.status === 400) {
-        alert('Имя и комментарий должны быть не короче 3 символов');
-        throw new Error("Неверный запрос");
-
-      }
-      else {
-        return response.json();
-      }
-    })
-    .then(() => {
-      buttonElement.disabled = false;
-      buttonElement.textContent = "Написать";
-      nameInputElement.value = "";
-      commentInputElement.value = "";
-
-      fetchGet();
-
-    })
-    .catch((error) => {
-
-      if (!navigator.onLine) {
-        alert('Кажется, у вас сломался интернет, попробуйте позже');
-      }
-
-      console.warn(error);
-      buttonElement.disabled = false;
-      buttonElement.textContent = "Написать";
-    });
-};
-
-token = null;
-
 const renderApp = (isInitialLoading, comentarios) => {
   const appEl = document.getElementById('app');
   if (!token) {
-    const appHtml = `<div class="login-form">
-  <p>Форма входа</p>
-  <input type="text" class="login-name" placeholder="Введите ваш логин" />
-  <br>
-  <br>
-  <input type="password" class="login-password" placeholder="Введите ваш пароль" />
-  <div class="add-form-row">
-    <button class="login-button">Войти</button>
-  </div>
-  <a class="link" href="#">Зарегистрироваться</a>
-  </div>`
-    appEl.innerHTML = appHtml;
-
-    document.querySelector('.login-button').addEventListener('click', () => {
-      let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-      fetchGet();
-      renderApp();
-    })
-    return;
-  }
-  const commentsHtml = comentarios.map((comment, index) => {
-    if (comment.isLiked) {
-      return `<li class="comment" data-index='${index}'>
-                <div class="comment-header">
-                  <div>${comment.name}</div>
-                  <div>${comment.date}</div>
-                </div>
-                <div class="comment-body">
-                  <div class="comment-text">
-                    ${comment.text}
-                  </div>
-                </div>
-                <div class="comment-footer">
-                  <div class="likes">
-                    <span class="likes-counter">${comment.likesNumber}</span>
-                    <button class="like-button -active-like" data-index='${index}'></button>
-                  </div>
-                </div>
-              </li>`;
-    } else {
-      return `<li class="comment" data-index='${index}'>
-                <div class="comment-header">
-                  <div>${comment.name}</div>
-                  <div>${comment.date}</div>
-                </div>
-                <div class="comment-body">
-                  <div class="comment-text">
-                    ${comment.text}
-                  </div>
-                </div>
-                <div class="comment-footer">
-                  <div class="likes">
-                    <span class="likes-counter">${comment.likesNumber}</span>
-                    <button class="like-button" data-index='${index}'></button>
-                  </div>
-                </div>
-              </li>`;
+      renderLoginComponent({ 
+        appEl, 
+        setToken: (newToken) => {
+        token = newToken;
+      },
+      fetchCommsAndRender
+    });
     }
+    return;
+  
+
+  const commentsHtml = comentarios.map((comment, index) => {
+    return `<li class="comment" data-index='${index}'>
+                <div class="comment-header">
+                  <div>${comment.name}</div>
+                  <div>${comment.date}</div>
+                </div>
+                <div class="comment-body">
+                  <div class="comment-text">
+                    ${comment.text}
+                  </div>
+                </div>
+                <div class="comment-footer">
+                  <div class="likes">
+                    <span class="likes-counter">${comment.likesNumber}</span>
+                    <button class="like-button ${comment.isLiked ? -active - like : ''}" data-index='${index}'></button>
+                  </div>
+                </div>
+            </li>`;
   }).join('');
 
   const appHtml = `<div class="container">
@@ -207,11 +141,6 @@ const renderApp = (isInitialLoading, comentarios) => {
   }
 
   appEl.innerHTML = appHtml;
-
-  const buttonElement = document.querySelector(".add-form-button");
-  const nameInputElement = document.querySelector(".add-form-name");
-  const commentInputElement = document.querySelector(".add-form-text");
-  const listElement = document.querySelector(".comments");
 
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
@@ -272,3 +201,5 @@ const initCommsListeners = () => {
     });
   });
 };
+
+fetchCommsAndRender();
