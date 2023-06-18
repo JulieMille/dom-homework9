@@ -60,17 +60,11 @@ export function loginUser({ login, password }) {
       body: JSON.stringify({
         login,
         password,
-        // forceError: true,
       }),
     })
     .then((response) => {
-      if (response.status === 500) {
-        alert('Сервер сломался, попробуй позже');
-        throw new Error("Ошибка сервера");
-
-      } else if (response.status === 400) {
-        alert('Имя и комментарий должны быть не короче 3 символов');
-        throw new Error("Неверный запрос");
+      if (response.status === 400) {
+        throw new Error("Неверный логин или пароль");
 
       }
       else {
