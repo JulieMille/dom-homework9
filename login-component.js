@@ -1,3 +1,5 @@
+import { loginUser } from "./api.js";
+
 export function renderLoginComponent({ appEl, setToken, fetchCommsAndRender }) {
     const appHtml = `<div class="login-form">
         <p>Форма входа</p>
@@ -15,7 +17,12 @@ export function renderLoginComponent({ appEl, setToken, fetchCommsAndRender }) {
     document.querySelector('.login-button').addEventListener('click', () => {
       setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
 
-
-      fetchCommsAndRender();
+      loginUser({ 
+        login: 'admin', 
+        password: 'admin' 
+    }).then ((user) => {
+        setToken(`bearer ${user.user.token}`)
+        fetchCommsAndRender();
+    })
     })
 }
