@@ -1,7 +1,10 @@
+import { getToken, setToken } from "./script.js";
+
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 const host = "https://wedev-api.sky.pro/api/v2/JulieSemenova/comments";
 
-export function fetchGet({ token }) {
+export function fetchGet( getToken ) {
+  token = getToken();
   return fetch(host,
     {
       method: "GET",
@@ -18,10 +21,11 @@ export function fetchGet({ token }) {
     });
 }
 
-export function fetchPost({ token }) {
+export function fetchPost( getToken ) {
   const nameInputElement = document.querySelector(".add-form-name");
   const commentInputElement = document.querySelector(".add-form-text");
   const buttonElement = document.querySelector(".add-form-button");
+  token = getToken();
 
   return fetch(host,
     {
@@ -65,6 +69,27 @@ export function loginUser({ login, password }) {
     .then((response) => {
       if (response.status === 400) {
         throw new Error("Неверный логин или пароль");
+
+      }
+      else {
+        return response.json();
+      }
+    });
+}
+
+export function registerUser({ name, login, password }) {
+  return fetch("https://wedev-api.sky.pro/api/user",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        login,
+        password,
+        name,
+      }),
+    })
+    .then((response) => {
+      if (response.status === 400) {
+        throw new Error("Такой пользователь уже существует");
 
       }
       else {

@@ -34,7 +34,11 @@ fetchPost({ token })
     buttonElement.textContent = "Написать";
   });
 
-// token = null;
+token = null;
+export const getToken = () => token;
+export const setToken = newToken => {
+    token = newToken;
+  }
 
 const fetchCommsAndRender = () => {
   return fetchGet({ token })
@@ -66,8 +70,10 @@ const renderApp = (isInitialLoading, comentarios) => {
       appEl,
       setToken: (newToken) => {
         token = newToken;
-      },
-      fetchCommsAndRender();
+      }
+
+  // fetchCommsAndRender(); 
+
     });
     return;
   }
