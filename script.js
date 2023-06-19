@@ -57,21 +57,20 @@ const fetchCommsAndRender = () => {
       isInitialLoading = false;
       renderApp(isInitialLoading, comentarios);
     });
-};
+  }
 
 const renderApp = (isInitialLoading, comentarios) => {
   const appEl = document.getElementById('app');
   if (!token) {
-      renderLoginComponent({ 
-        appEl, 
-        setToken: (newToken) => {
+    renderLoginComponent({
+      appEl,
+      setToken: (newToken) => {
         token = newToken;
       },
-      fetchCommsAndRender
+      fetchCommsAndRender();
     });
-    }
     return;
-  
+  }
 
   const commentsHtml = comentarios.map((comment, index) => {
     return `<li class="comment" data-index='${index}'>
@@ -115,24 +114,7 @@ const renderApp = (isInitialLoading, comentarios) => {
     <button class="login-button">Войти</button>
   </div>
   <a class="link" href="#">Зарегистрироваться</a>
-</div>
-<div class="reg-form">
-  <p>Форма регистрации</p>
-  <input type="text" class="reg-name" placeholder="Введите ваше имя" />
-  <br>
-  <br>
-  <input type="text" class="reg-login" placeholder="Введите ваш логин" />
-  <br>
-  <br>
-  <input type="password" class="reg-password" placeholder="Введите ваш пароль" />
-  <div class="add-form-row">
-    <button class="reg-button">Зарегистрироваться</button>
-  </div>
-  <a class="link" href="#">Войти</a>
-</div>
-        </div>`
-
-
+  </div>`
 
 
   if (isInitialLoading) {
@@ -166,6 +148,7 @@ const renderApp = (isInitialLoading, comentarios) => {
   initLikeButtonsElements();
   initCommsListeners();
 }
+
 
 
 
