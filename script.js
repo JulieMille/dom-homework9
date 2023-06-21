@@ -1,6 +1,11 @@
 import { fetchGet, fetchPost } from "./api.js";
 import { renderLoginComponent } from "./login-component.js";
 
+export const getToken = () => token;
+export const setToken = newToken => {
+  token = newToken;
+}
+
 const buttonElement = document.querySelector(".add-form-button");
 const nameInputElement = document.querySelector(".add-form-name");
 const commentInputElement = document.querySelector(".add-form-text");
@@ -13,7 +18,7 @@ let isInitialLoading = true;
 
 fetchGet();
 
-fetchPost({ token })
+fetchPost()
   .then(() => {
     buttonElement.disabled = false;
     buttonElement.textContent = "Написать";
@@ -35,13 +40,9 @@ fetchPost({ token })
   });
 
 token = null;
-export const getToken = () => token;
-export const setToken = newToken => {
-    token = newToken;
-  }
 
 const fetchCommsAndRender = () => {
-  return fetchGet({ token })
+  return fetchGet()
     .then((responseData) => {
       const appComments = responseData.comments
         .map((comment) => {
@@ -61,7 +62,7 @@ const fetchCommsAndRender = () => {
       isInitialLoading = false;
       renderApp(isInitialLoading, comentarios);
     });
-  }
+}
 
 const renderApp = (isInitialLoading, comentarios) => {
   const appEl = document.getElementById('app');
@@ -72,7 +73,7 @@ const renderApp = (isInitialLoading, comentarios) => {
         token = newToken;
       }
 
-  // fetchCommsAndRender(); 
+      // fetchCommsAndRender(); 
 
     });
     return;
