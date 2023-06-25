@@ -6,7 +6,7 @@ export function renderLoginComponent({ appEl, setToken, fetchCommsAndRender }) {
 
     const renderForm = () => {
         const appHtml = `<div class="login-form">
-        <p>Форма ${isLoginMode ? "входа" : "регистрации"}</p>
+        <p class="reg-header">Форма ${isLoginMode ? "входа" : "регистрации"}</p>
         ${isLoginMode
                 ? ''
                 : `<input type="text" class="reg-name" placeholder="Введите ваше имя" />

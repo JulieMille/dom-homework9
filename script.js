@@ -86,7 +86,7 @@ const renderApp = (isInitialLoading, comentarios) => {
 
   appEl.innerHTML = appHtml;
   const listElement = document.querySelector(".comments");
-  
+
   if (token) {
     initButtonSend();
     initLikeButtonsElements();
@@ -170,7 +170,7 @@ const initLikeButtonsElements = () => {
 
 const initCommsListeners = () => {
   const comms = document.querySelectorAll('.comment');
-
+  const commentInputElement = document.querySelector(".add-form-text");
   comms.forEach((comm) => {
     comm.addEventListener('click', (event) => {
       event.stopPropagation();
