@@ -1,47 +1,22 @@
 import { fetchGet, fetchPost } from "./api.js";
 import { renderLoginComponent } from "./login-component.js";
 
+let token = null;
 export const getToken = () => token;
 export const setToken = newToken => {
   token = newToken;
 }
 
-const buttonElement = document.querySelector(".add-form-button");
-const nameInputElement = document.querySelector(".add-form-name");
-const commentInputElement = document.querySelector(".add-form-text");
-const listElement = document.querySelector(".comments");
 
 let comentarios = [];
-let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+// let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 
 let isInitialLoading = true;
 
-fetchGet();
-
-fetchPost()
-  .then(() => {
-    buttonElement.disabled = false;
-    buttonElement.textContent = "Написать";
-    nameInputElement.value = "";
-    commentInputElement.value = "";
-
-    fetchGet();
-
-  })
-  .catch((error) => {
-
-    if (!navigator.onLine) {
-      alert('Кажется, у вас сломался интернет, попробуйте позже');
-    }
-
-    console.warn(error);
-    buttonElement.disabled = false;
-    buttonElement.textContent = "Написать";
-  });
-
-token = null;
+// fetchGet();
 
 const fetchCommsAndRender = () => {
+  // вызвать рендер ап
   return fetchGet()
     .then((responseData) => {
       const appComments = responseData.comments
@@ -62,75 +37,78 @@ const fetchCommsAndRender = () => {
       isInitialLoading = false;
       renderApp(isInitialLoading, comentarios);
     });
-}
+};
+
+fetchCommsAndRender();
+
+const appEl = document.getElementById('app');
 
 const renderApp = (isInitialLoading, comentarios) => {
-  const appEl = document.getElementById('app');
-  if (!token) {
-    renderLoginComponent({
-      appEl,
-      setToken: (newToken) => {
-        token = newToken;
-      }
-
-      // fetchCommsAndRender(); 
-
-    });
-    return;
-  }
 
   const commentsHtml = comentarios.map((comment, index) => {
     return `<li class="comment" data-index='${index}'>
-                <div class="comment-header">
-                  <div>${comment.name}</div>
-                  <div>${comment.date}</div>
-                </div>
-                <div class="comment-body">
-                  <div class="comment-text">
-                    ${comment.text}
+                  <div class="comment-header">
+                    <div>${comment.name}</div>
+                    <div>${comment.date}</div>
                   </div>
-                </div>
-                <div class="comment-footer">
-                  <div class="likes">
-                    <span class="likes-counter">${comment.likesNumber}</span>
-                    <button class="like-button ${comment.isLiked ? -active - like : ''}" data-index='${index}'></button>
+                  <div class="comment-body">
+                    <div class="comment-text">
+                      ${comment.text}
+                    </div>
                   </div>
-                </div>
-            </li>`;
+                  <div class="comment-footer">
+                    <div class="likes">
+                      <span class="likes-counter">${comment.likesNumber}</span>
+                      <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index='${index}'></button>
+                    </div>
+                  </div>
+              </li>`;
   }).join('');
 
+
   const appHtml = `<div class="container">
-<ul class="comments">
-  <!-- рендеринг -->
-  ${commentsHtml}
-</ul>
-<div class="add-form">
-  <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-  <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
-  <div class="add-form-row">
-    <button class="add-form-button">Написать</button>
-  </div>
-</div>
-<div class="login-form">
-  <p>Форма входа</p>
-  <input type="text" class="login-name" placeholder="Введите ваш логин" />
-  <br>
-  <br>
-  <input type="password" class="login-password" placeholder="Введите ваш пароль" />
-  <div class="add-form-row">
-    <button class="login-button">Войти</button>
-  </div>
-  <a class="link" href="#">Зарегистрироваться</a>
-  </div>`
+  <ul class="comments">
+    <!-- рендеринг -->
+    ${commentsHtml}
+  </ul>
 
-
-  if (isInitialLoading) {
-    listElement.innerHTML = "Загружаю комментарии...";
-    return;
-  }
+  ${!token ?
+      '<div><a class="link-enter" href="#">Перейти ко входу</a></div>'
+      :
+      `<div class="add-form">
+    <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+    <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+    <div class="add-form-row">
+      <button class="add-form-button">Написать</button>
+    </div>
+  </div>`}
+  `
 
   appEl.innerHTML = appHtml;
+  const listElement = document.querySelector(".comments");
+  
+  if (token) {
+    initButtonSend();
+    initLikeButtonsElements();
+    initCommsListeners();
 
+  } else {
+    const aufLinkElement = document.querySelector(".link-enter");
+    aufLinkElement.addEventListener('click', () => {
+      renderLoginComponent({ appEl, setToken, fetchCommsAndRender })
+    })
+  }
+
+  if (isInitialLoading) {
+    console.log(listElement);
+    listElement.innerHTML = "Загружаю комментарии...";
+  }
+}
+
+const initButtonSend = () => {
+  const buttonElement = document.querySelector(".add-form-button");
+  const nameInputElement = document.querySelector(".add-form-name");
+  const commentInputElement = document.querySelector(".add-form-text");
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
@@ -143,21 +121,31 @@ const renderApp = (isInitialLoading, comentarios) => {
       return;
     }
 
+    fetchPost()
+      .then(() => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать";
+        nameInputElement.value = "";
+        commentInputElement.value = "";
+
+        fetchCommsAndRender();
+
+      })
+      .catch((error) => {
+
+        if (!navigator.onLine) {
+          alert('Кажется, у вас сломался интернет, попробуйте позже');
+        }
+
+        console.warn(error);
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать";
+      });
+
     buttonElement.disabled = true;
     buttonElement.textContent = "Комментарий добавляется";
-
-    fetchPost();
-
-    renderApp(isInitialLoading, comentarios);
-
   });
-
-  initLikeButtonsElements();
-  initCommsListeners();
 }
-
-
-
 
 const initLikeButtonsElements = () => {
   const likeButtons = document.querySelectorAll('.like-button');
@@ -171,7 +159,11 @@ const initLikeButtonsElements = () => {
       comment.likesNumber = comment.isLiked ? comment.likesNumber - 1 : comment.likesNumber + 1;
       comment.isLiked = !comment.isLiked;
 
-      renderApp();
+      console.log(comment);
+
+      renderApp(isInitialLoading, comentarios);
+
+
     });
   });
 };

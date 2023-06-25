@@ -62,8 +62,8 @@ export function loginUser({ login, password }) {
     {
       method: "POST",
       body: JSON.stringify({
-        login,
-        password,
+        login: login,
+        password: password,
       }),
     })
     .then((response) => {
