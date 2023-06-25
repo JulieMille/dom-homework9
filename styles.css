@@ -23,8 +23,7 @@ body {
 
   .comment,
   .add-form,
-  .login-form,
-  .reg-form {
+  .login-form {
     width: 596px;
     box-sizing: border-box;
     background: radial-gradient(
@@ -94,12 +93,23 @@ body {
   }
 
   .add-form,
-  .login-form,
-  .reg-form {
+  .login-form {
     padding: 20px;
     margin-top: 48px;
     display: flex;
     flex-direction: column;
+  }
+
+  .login-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .reg-header {
+    font-family: Helvetica;
+    color: black;
+    font-size: 18px;
   }
 
   .add-form-name,
@@ -130,6 +140,7 @@ body {
   .add-form-row {
     display: flex;
     justify-content: flex-end;
+    gap: 20px;
   }
 
   .add-form-button,
@@ -154,8 +165,4 @@ body {
 
   .toggle-button:hover {
     opacity: 0.9;
-  }
-
-  .link {
-    color: white;
   }
