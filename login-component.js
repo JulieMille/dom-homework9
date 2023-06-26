@@ -5,7 +5,7 @@ export function renderLoginComponent({ appEl, setToken, fetchCommsAndRender }) {
     let isLoginMode = true;
 
     const renderForm = () => {
-        const appHtml = `<div class="login-form">
+        const appHtml = `<div class="container"> <div class="login-form">
         <p class="reg-header">Форма ${isLoginMode ? "входа" : "регистрации"}</p>
         ${isLoginMode
                 ? ''
@@ -21,6 +21,7 @@ export function renderLoginComponent({ appEl, setToken, fetchCommsAndRender }) {
             <br>
             <br>
             <button class="toggle-button">Перейти к ${isLoginMode ? "регистрации" : "входу"}</button>
+        </div>
         </div>
         </div>`
         appEl.innerHTML = appHtml;
