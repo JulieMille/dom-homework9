@@ -1,5 +1,6 @@
 import { fetchGet, fetchPost } from "./api.js";
 import { renderLoginComponent } from "./login-component.js";
+import { format } from "date-fns";
 
 let token = null;
 export const getToken = () => token;
@@ -21,9 +22,11 @@ const fetchCommsAndRender = () => {
     .then((responseData) => {
       const appComments = responseData.comments
         .map((comment) => {
+          const now = new Date();
           return {
             name: comment.author.name,
-            date: new Date(comment.date).toLocaleDateString() + ' ' + new Date(comment.date).toLocaleTimeString().slice(0, -3),
+            date: format(now, "yyyy.MM.dd hh.mm.ss"),
+            // date: new Date(comment.date).toLocaleDateString() + ' ' + new Date(comment.date).toLocaleTimeString().slice(0, -3),
             text: comment.text,
             likesNumber: comment.likes,
             isLiked: false,
